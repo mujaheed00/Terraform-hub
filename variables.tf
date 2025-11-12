@@ -13,14 +13,14 @@ variable "aws_secret_key" {
 variable "aws_region" {
   description = "AWS region"
   type        = string
-  default     = "eu-north-1"
+  default     = "us-east-1"
 }
 
 
 variable "ami" {
    type        = string
    description = "Amazon Linux AMI ID"
-   default     = "ami-05535ba2f47d4b7a2"
+   default     = "ami-0cae6d6fe6048ca2c"
 }
 
 variable "instance_type" {
@@ -34,5 +34,6 @@ variable "name_tag" {
    description = "Name of the EC2 instance"
    default     = "Terraform-plugin"
 }
+
 
 
