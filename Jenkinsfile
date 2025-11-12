@@ -16,15 +16,17 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh '''
-                        terraform init
-                        terraform plan -out=tfplan
-                        terraform apply -auto-approve tfplan
+                        terraform init -input=false -no-color
+                        terraform plan -out=tfplan -input=false -no-color
+                        terraform apply -auto-approve -input=false -no-color tfplan
                     '''
                 }
             }
         }
     }
 }
+
+
 
 
 
