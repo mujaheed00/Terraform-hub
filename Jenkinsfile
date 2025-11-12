@@ -12,42 +12,26 @@ pipeline {
             }
         }
 
-        stage('Terraform Validate') {
-            steps {
-                echo "✅ Initializing Terraform..."
-                sh 'terraform init -input=false -no-color || true'
-
-                echo "✅ Validating Terraform configuration..."
-                sh 'terraform validate || true'
+        stage('Terraform') {
+            options {
+                timeout(time: 2, unit: 'MINUTES')  // ⏱ stop stage after 2 minutes
             }
-        }
-
-        stage('Terraform Plan (Dry Run)') {
             steps {
-                echo "🧩 Running Terraform plan (simulation only)..."
-                sh 'echo "Simulated terraform plan complete."'
-            }
-        }
-
-        stage('Complete') {
-            steps {
-                echo "🎉 Terraform pipeline executed successfully (simulation)."
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    sh '''
+                        set -x
+                        terraform init -input=false -no-color || true
+                        terraform plan -out=tfplan -input=false -no-color || true
+                        terraform apply -auto-approve -input=false -no-color tfplan || true
+                    '''
+                }
             }
         }
     }
 
     post {
-        success {
-            echo "✅ Build completed successfully!"
-        }
-        failure {
-            echo "❌ Build failed!"
+        always {
+            echo "✅ Job completed — pipeline finished execution."
         }
     }
 }
-
-
-
-
-
-
