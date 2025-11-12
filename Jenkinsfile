@@ -13,25 +13,15 @@ pipeline {
         }
 
         stage('Terraform') {
-            options {
-                timeout(time: 2, unit: 'MINUTES')  // ⏱ stop stage after 2 minutes
-            }
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh '''
-                        set -x
-                        terraform init -input=false -no-color || true
-                        terraform plan -out=tfplan -input=false -no-color || true
-                        terraform apply -auto-approve -input=false -no-color tfplan || true
+                        terraform init
+                        terraform plan -out=tfplan
+                        terraform apply -auto-approve tfplan
                     '''
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo "✅ Job completed — pipeline finished execution."
         }
     }
 }
